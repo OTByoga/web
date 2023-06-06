@@ -1,0 +1,65 @@
+body {
+    font-family: "Courier New", monospace;
+    font-weight: 400;
+    color: #666;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    background-color: #fff;
+    line-height: 1.5 ;
+
+}
+
+header {
+    background-color: #f8f8f8;
+    padding: 20px;
+    text-align: center;
+}
+
+h1, h2 {
+    color: #333;
+}
+
+main {
+    margin: 100px;
+    text-align: justify;
+    padding: 20px;
+}
+
+footer {
+    background-color: #f8f8f8;
+    padding: 20px;
+    text-align: center;
+    font-size: 0.8em;
+    color: #333;
+}
+.navbar {
+    overflow: hidden;
+    background-color: #33333300;
+}
+
+.navbar a {
+    float: center;
+    display: block;
+    color: #1b1b1b;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+.navbar a:hover {
+    background: #8e8e8e;
+    color: black;
+}
+.back-button {
+    background: none; /* removes the default button background */
+    border: none;  /* removes the default button border */
+    color: blue;  /* changes the text color to blue */
+    text-decoration: underline;  /* adds an underline to the text */
+    cursor: pointer;  /* changes the cursor to a hand when hovering over the button */
+  }
+  p {
+    margin-bottom: 10px; /* Adds 10 pixels of space below each paragraph */
+  }
+  

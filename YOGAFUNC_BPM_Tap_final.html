@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>YOGAFUNC BPM Tap</title>
+  <style>
+    /* CSS styles with Gill Sans font */
+    body {
+      font-family: "Gill Sans", sans-serif;
+      text-align: center; /* Center align the content */
+    }
+
+    h1 {
+      font-weight: bold;
+    }
+
+    p {
+      font-weight: normal;
+    }
+
+    #bpm-display,
+    #suggestion {
+      text-align: center; /* Center align the text elements */
+    }
+
+    #bpm-display {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    /* Define the colors for each BPM range */
+    .range-0 {
+      color: #808080; /* Gray */
+    }
+
+    .range-1 {
+      color: #4682B4; /* Steel Blue */
+    }
+
+    .range-2 {
+      color: #FF8C00; /* Dark Orange */
+    }
+
+    .range-3 {
+      color: #DC143C; /* Crimson */
+    }
+
+    .range-4 {
+      color: #800080; /* Purple */
+    }
+
+    .range-5 {
+      color: #000000; /* Black */
+    }
+
+    .range-6 {
+      color: #008000; /* Green */
+    }
+
+    .range-7 {
+      color: #FF00FF; /* Fuchsia */
+    }
+
+    /* Photo styles */
+    .photo-container {
+      margin-top: 20px;
+      display: none; /* Initially hide all photo containers */
+    }
+
+    .photo-container.active {
+      display: block; /* Show active photo container */
+    }
+
+    .photo {
+      max-width: 300px;
+      height: auto;
+    }
+
+    .photo-caption {
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    /* Logo styles */
+    .logo-container {
+      max-width: 200px;
+      margin: 20px auto;
+      display: block; /* Initially show the logo container */
+    }
+
+    .logo {
+      max-width: 100%;
+    }
+
+    .website-link {
+      margin-top: 10px;
+    }
+
+    /* Tap indicator styles */
+    .tap-indicator {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.5);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+      z-index: 9999;
+    }
+
+    .tap-indicator.active {
+      opacity: 0.5;
+      transform: translate(-50%, -50%) scale(1.2);
+    }
+    .back-button {
+  margin-top: 20px;
+  font-size: 18px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.back-button:hover {
+  text-decoration: underline;
+}
+
+.back-button:before {
+  content: "\2190";
+  margin-right: 5px;
+}
+
+  </style>
+  <script>
+    function calculateBPM() {
+      var tapTimes = [];
+      var bpmHistory = [];
+      var averageBPM = 0;
+
+      var bpmDisplay = document.getElementById("bpm-display");
+      var suggestionDisplay = document.getElementById("suggestion");
+      var photoContainers = document.querySelectorAll(".photo-container");
+      var logoContainer = document.querySelector(".logo-container");
+
+      var bpmRanges = [
+        { min: 0, max: 40, text: "A little slow for YOGAFUNC. Depending on the song, it may be suitable for relaxation.", className: "range-0", photoIndex: 0 },
+        { min: 40, max: 60, text: "Suitable tempo for the following tracks:<br><br>- Track 09: Forward Bending<br>- Track 11: Hip Opening", className: "range-1", photoIndex: 1 },
+        { min: 60, max: 70, text: "Great tempo for the following tracks:<br><br>- Track 01: Sun Salutation A<br>- Track 03: Triangles<br>- Track 05: Warriors (in some cases)", className: "range-2", photoIndex: 2 },
+        { min: 70, max: 80, text: "Works well for the following tracks:<br><br>- Track 02: Sun Salutation B<br>- Track 04: Balance<br>- Track 05: Warriors<br>- Track 06: Hip Openings<br>- Track 07: Core<br>- Track 08: Upper Body Strength<br>- Track 10: Rotations", className: "range-3", photoIndex: 3 },
+        { min: 80, max: 120, text: "Let's build strength with the following tracks:<br><br>- Track 07: Core Strength<br>- Track 08: Upper Body Strength", className: "range-4", photoIndex: 4 },
+        { min: 120, max: Infinity, text: "Consider tapping at half the tempo.", className: "range-5", photoIndex: 5 }
+      ];
+
+      var resetTimeout; // Variable to hold the reset timeout
+
+      document.addEventListener("keydown", function(event) {
+        if (event.code === "Space") {
+          clearTimeout(resetTimeout); // Clear the reset timeout
+
+          var currentTime = new Date().getTime();
+
+          if (tapTimes.length >= 2) {
+            var deltaTime = currentTime - tapTimes[tapTimes.length - 1];
+            var bpm = Math.round(60000 / deltaTime);
+
+            // Add the current BPM to history
+            bpmHistory.push(bpm);
+
+            // Calculate the average BPM
+            averageBPM = Math.round(
+              bpmHistory.reduce(function(a, b) {
+                return a + b;
+              }, 0) / bpmHistory.length
+            );
+
+            bpmDisplay.textContent = "BPM: " + averageBPM;
+
+            suggestionDisplay.innerHTML = ""; // Clear previous suggestion
+            suggestionDisplay.className = ""; // Clear previous class name
+
+            // Hide all photos
+            for (var i = 0; i < photoContainers.length; i++) {
+              photoContainers[i].classList.remove("active");
+            }
+
+            for (var i = 0; i < bpmRanges.length; i++) {
+              var range = bpmRanges[i];
+
+              if (averageBPM >= range.min && averageBPM <= range.max) {
+                suggestionDisplay.innerHTML = range.text;
+                suggestionDisplay.className = range.className;
+
+                // Show the photo for the current BPM range
+                photoContainers[range.photoIndex].classList.add("active");
+
+                // Hide the logo container when a photo is shown
+                logoContainer.classList.add("hidden");
+
+                break;
+              }
+            }
+          }
+
+          tapTimes.push(currentTime);
+
+          // Show the tap indicator
+          var tapIndicator = document.createElement("div");
+          tapIndicator.classList.add("tap-indicator");
+          document.body.appendChild(tapIndicator);
+          tapIndicator.offsetWidth; // Trigger reflow to apply initial styling
+          tapIndicator.classList.add("active");
+
+          // Remove the tap indicator after a short delay
+          setTimeout(function() {
+            document.body.removeChild(tapIndicator);
+          }, 300);
+          
+          // Set the reset timeout to 2 seconds
+          resetTimeout = setTimeout(function() {
+            tapTimes = []; // Reset tap times
+            bpmHistory = []; // Reset BPM history
+            averageBPM = 0; // Reset average BPM
+            bpmDisplay.textContent = "BPM: 0"; // Reset BPM display
+          }, 2000);
+        }
+      });
+
+      // Mobile touch event support
+      document.addEventListener("touchstart", function(event) {
+        event.preventDefault();
+        tapEvent();
+      });
+    }
+
+    // Function to handle tap event
+    function tapEvent() {
+      // Function code remains the same as before
+      // ...
+    }
+  </script>
+  <script>
+    function goBack() {
+      window.history.back();
+    }
+    </script>
+
+</head>
+<body onload="calculateBPM()">
+  <button onclick="goBack()" class="back-button">&larr; Go Back</button>
+
+  <h1>YOGAFUNC BPM Tap</h1>
+  <p>Tap the spacebar or touch the screen to calculate the BPM:</p>
+  <p id="bpm-display"></p>
+  <p id="suggestion"></p>
+
+  <div class="photo-container">
+    <img class="photo" src="images/photo-0.jpg" alt="Photo 0">
+  </div>
+  <div class="photo-container">
+    <img class="photo" src="images/photo-1.jpg" alt="Photo 1">
+  </div>
+  <div class="photo-container">
+    <img class="photo" src="images/photo-2.jpg" alt="Photo 2">
+  </div>
+  <div class="photo-container">
+    <img class="photo" src="images/photo-3.jpg" alt="Photo 3">
+  </div>
+  <div class="photo-container">
+    <img class="photo" src="images/photo-4.jpg" alt="Photo 4">
+  </div>
+
+  <div class="logo-container">
+    <img class="logo" src="images/yogafunc-logo.png" alt="YOGAFUNC Logo">
+    <p class="website-link">Visit us at <a href="https://www.otb.yoga">www.otb.yoga</a></p>
+  </div>
+</body>
+</html>
