@@ -10,6 +10,7 @@ window.onload = function() {
                 {name: "Yoga Apps", link: "yoga_apps.html"},
                 {name: "Backstage", link: "backstage.html"},
                 {name: "Next YOGAFUNC Release", link: "next_yogafunc_release.html"},
+                {name: "YOGAFUNC Music Search", link: "yogafunc_music_search.html"},
                 // Add more items as needed
             ];
 
