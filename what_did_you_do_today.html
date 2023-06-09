@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <p>I tried to let Chad (GPT 3.5 as 4 is having a break)create an introduction to this, but it turned out to be a bit grandiose. So, I've decided to do it myself. The idea behind this app is quite simple: it functions as a training diary. You can log in, enter your data, and watch as the leaderboard gets updated. Personally, I'll be starting by adding my push-ups and pull-ups.
+
+        If you have any activities you'd like to add and share with the community, but don't see the option available, please feel free to send me a message via Twitter or by using the email form below. I'll be happy to include your suggested activity in the list of options.</p>
+        
+        <p>(The first version of this app will be here soon.)</p>
+  <title>What Did You Do Today? - Fitness Tracking Web Application</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+<body>
+  <h1>What Did You Do Today? - Fitness Tracking Web Application</h1>
+  <h2>Google Form Setup:</h2>
+  <ol>
+    <li>Create a new Google Form in your Google Drive account.</li>
+    <li>Add the necessary form fields, including identification fields (name, email, etc.) and fields specific to each fitness activity (e.g., push-ups, squats, pull-ups, biking distance, steps).</li>
+    <li>Customize the form design to suit your website's theme and branding.</li>
+    <li>Ensure the form responses are stored in a Google Sheets spreadsheet.</li>
+  </ol>
+
+  <h2>Google Sheets API Setup:</h2>
+  <ol>
+    <li>Enable the Google Sheets API in the Google Cloud Console.</li>
+    <li>Create API credentials (OAuth 2.0) to authenticate your web application with the Google Sheets API.</li>
+    <li>Retrieve the necessary credentials, including the client ID and client secret.</li>
+  </ol>
+
+  <h2>Web Application Setup:</h2>
+  <ol>
+    <li>Set up a development environment for your web application, including a code editor, a local server, and version control (if desired).</li>
+    <li>Create a new directory for your project and establish the basic file structure (HTML, CSS, and JavaScript files).</li>
+    <li>Include any necessary libraries or frameworks, such as jQuery or Bootstrap (optional).</li>
+    <li>Design the user interface of your web application, including the form submission interface and the section to display fitness activity data.</li>
+  </ol>
+
+  <h2>User Authentication:</h2>
+  <ol>
+    <li>Choose an authentication mechanism, such as Google Sign-In or implementing your own user authentication system.</li>
+    <li>Implement the authentication flow on your web application, allowing users to sign in and authenticate themselves.</li>
+    <li>Ensure that only authenticated users can access and submit fitness activity data.</li>
+  </ol>
+
+  <h2>Retrieve Data from Google Sheets:</h2>
+  <ol>
+    <li>Utilize the Google Sheets API client library or make direct API requests using JavaScript to retrieve the fitness activity data from the Google Sheets spreadsheet.</li>
+    <li>Parse and process the data received, grouping it by activity type and user.</li>
+    <li>Update the web page dynamically to display the fitness activity data in a visually appealing manner, including activity totals and leaderboards.</li>
+  </ol>
+
+  <h2>Enable Fitness Activity Submissions:</h2>
+  <ol>
+    <li>Create a form submission interface on your web application, allowing authenticated users to enter their fitness activity data for each specific activity (push-ups, squats, pull-ups, biking distance, steps, etc.).</li>
+    <li>Implement the functionality to handle form submissions and send the data to the Google Form using the appropriate API or library.</li>
+  </ol>
+
+  <h2>Periodic Data Update:</h2>
+  <ol>
+    <li>Set up a cron job or scheduled task to periodically update the fitness activity data by fetching the latest information from the Google Sheets spreadsheet.</li>
+    <li>Implement the logic to update the web page automatically with the updated data.</li>
+  </ol>
+
+  <h2>Testing and Deployment:</h2>
+  <ol>
+    <li>Test your web application thoroughly, ensuring that form submissions, data retrieval, and data display work as expected for each fitness activity.</li>
+    <li>Deploy your web application to a hosting provider or your preferred web server, making it accessible to users.</li>
+  </ol>
+</body>
+</html>

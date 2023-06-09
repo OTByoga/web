@@ -3,7 +3,7 @@ body {
     font-weight: 400;
     color: #666;
     margin: 0;
-    padding: 20px;  /* reduced from 100px */
+    padding: 2em;  /* reduced from 100px */
     text-align: left;
     background-color: #fff;
     line-height: 1.5;
@@ -48,7 +48,7 @@ h1, h2 {
 main {
     margin: 20px;  /* reduced from 100px */
     text-align: justify;
-    padding: 20px;
+    padding: 2em;
 }
 
 footer {
@@ -69,4 +69,22 @@ footer {
 
 p {
     margin-bottom: 10px;
+}
+img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  @media screen and (max-width: 600px) {
+    body {
+        padding: 1em;
+    }
+
+    main {
+        margin: 1em;
+    }
+
+    header {
+        padding: 1em;
+    }
 }

@@ -4,6 +4,7 @@
         <!-- This part of the code defines the metadata for the webpage like the title and the linked CSS for styling. -->
         <title>Backstage</title>
         <!-- This line links the external CSS file. -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" type="text/css" href="style.css">
     </head>
     <body>
@@ -27,6 +28,7 @@
                         <h2>${post.title}</h2>
                         <p>${post.date}</p>
                         <p>${post.content}</p>
+                        <p>${post.tags}</p>
                     </div>
                     `;
                 });
