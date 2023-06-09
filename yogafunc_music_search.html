@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YOGAFUNC Music Search</title>
+    
+</head>
+<body>
+    <h1>YOGAFUNC Music Search</h1>
+    <div id="version"></div>
+    <input type="text" id="searchInput" placeholder="Search...">
+    <div id="searchResults"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script>
+        var data = [];
+
+        Papa.parse("https://raw.githubusercontent.com/OTByoga/YOGAFUNC_Music/main/YOGAFUNC%20releases%20%2301-47%20combined_no_duplicates%20-%20combined_no_duplicates%20(3).csv", {
+            download: true,
+            header: true,
+            complete: function(results) {
+                data = results.data;
+            }
+        });
+
+        function searchMusic() {
+            var searchInput = document.getElementById('searchInput').value.toLowerCase();
+            var searchResults = document.getElementById('searchResults');
+            searchResults.innerHTML = '';
+
+            var matches = data.filter(function(item) {
+                return (
+                    item['Track Name'].toLowerCase().includes(searchInput) ||
+                    item['Album Name'].toLowerCase().includes(searchInput) ||
+                    item['Artist Name(s)'].toLowerCase().includes(searchInput) ||
+                    item['Genres'].toLowerCase().includes(searchInput)
+                );
+            });
+
+            if (matches.length > 0) {
+                var table = document.createElement('table');
+
+                var headers = {
+                    'Spotify ID': 'Spotify ID',
+                    'Artist IDs': 'Artist IDs',
+                    'Track Name': 'Track Name',
+                    'Album Name': 'Album Name',
+                    'Artist Name(s)': 'Artist Name(s)',
+                    'Release Date': 'Release Date',
+                    'Duration (ms)': 'Duration',
+                    'Popularity': 'Popularity',
+                    'Added By': 'Added By',
+                    'Added At': 'Added At',
+                    'Genres': 'Genres',
+                    'Danceability': 'Danceability (%)',
+                    'Energy': 'Energy (%)',
+                    'Key': 'Key',
+                    'Loudness': 'Loudness',
+                    'Mode': 'Emotional Character',
+                    'Speechiness': 'Speechiness (%)',
+                    'Acousticness': 'Acousticness (%)',
+                    'Instrumentalness': 'Instrumentalness (%)',
+                    'Liveness': 'Liveness (%)',
+                    'Valence': 'Positivity scale (%)',
+                    'Tempo': 'Tempo',
+                    'Time Signature': 'Time Signature',
+                    'YOGAFUNC release#': 'YOGAFUNC release#',
+                    'YOGAFUNC Excercise': 'YOGAFUNC Excercise',
+                    'This YOGAFUNC release was launched': 'This YOGAFUNC release was launched'
+                };
+                
+                var modeDescriptions = {
+                    '0': 'Minor Key',
+                    '1': 'Major Key'
+                };
+
+                var headerRow = document.createElement('tr');
+                for (var key in headers) {
+                    if (headers.hasOwnProperty(key)) {
+                        var headerCell = document.createElement('th');
+                        headerCell.textContent = headers[key];
+                        headerRow.appendChild(headerCell);
+                    }
+                }
+                table.appendChild(headerRow);
+
+                matches.forEach(function(item) {
+                    var row = document.createElement('tr');
+                    for (var key in headers) {
+                        if (headers.hasOwnProperty(key)) {
+                            var cell = document.createElement('td');
+                            var value = item[key];
+                            
+                            // Convert decimal values to percentages
+                            if (key === 'Danceability' || key === 'Energy' || key === 'Speechiness' || key === 'Acousticness' || key === 'Instrumentalness' || key === 'Liveness' || key === 'Valence') {
+                                value = (parseFloat(value) * 100).toFixed(2) + '%';
+                            }
+                            
+                            // Convert duration from milliseconds to minutes and seconds
+                            if (key === 'Duration (ms)') {
+                                var duration = parseFloat(value);
+                                var minutes = Math.floor(duration / 60000);
+                                var seconds = ((duration % 60000) / 1000).toFixed(0);
+                                value = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+                            }
+                            
+                            // Map mode values to emotional character descriptions
+                            if (key === 'Mode') {
+                                value = modeDescriptions[value] || '-';
+                            }
+                            
+                            // Generate Spotify track link
+                            if (key === 'Spotify ID') {
+                                var trackId = value;
+                                var trackLink = document.createElement('a');
+                                trackLink.href = 'https://open.spotify.com/track/' + trackId;
+                                trackLink.target = '_blank';
+                                trackLink.textContent = trackId;
+                                cell.appendChild(trackLink);
+                            }
+                            
+                            // Generate Spotify artist links
+                            if (key === 'Artist IDs' && value) {
+                                var artistIds = value.split(',');
+                                artistIds.forEach(function(artistId) {
+                                    var artistLink = document.createElement('a');
+                                    artistLink.href = 'https://open.spotify.com/artist/' + artistId.trim();
+                                    artistLink.target = '_blank';
+                                    artistLink.textContent = artistId.trim();
+                                    cell.appendChild(document.createElement('br'));
+                                    cell.appendChild(artistLink);
+                                });
+                            }
+                            
+                            if (key !== 'Spotify ID' && key !== 'Artist IDs') {
+                                cell.textContent = value;
+                            }
+                            
+                            row.appendChild(cell);
+                        }
+                    }
+                    table.appendChild(row);
+                });
+
+                searchResults.appendChild(table);
+            } else {
+                searchResults.textContent = 'No matching results found.';
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('input', searchMusic);
+
+        var versionElement = document.getElementById('version');
+        var versionNumber = "4.2.4"; // Replace with your desired version number
+        
+        if (versionNumber) {
+            versionElement.style.display = 'block';
+            versionElement.textContent = "Ver (" + versionNumber + ")";
+        } else {
+            versionElement.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
