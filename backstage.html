@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- This part of the code defines the metadata for the webpage like the title and the linked CSS for styling. -->
+        <title>Backstage</title>
+        <!-- This line links the external CSS file. -->
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body>
+        <!-- header will be loaded here -->
+        <div id="header"></div>
+
+        Here are post updates about my project.
+        <div>
+    
+            <div id="feed"></div>
+        </div>
+
+        <script>
+        fetch('posts.json')
+            .then(response => response.json())
+            .then(data => {
+                let output = '';
+                data.posts.forEach(post => {
+                    output += `
+                    <div class="post">
+                        <h2>${post.title}</h2>
+                        <p>${post.date}</p>
+                        <p>${post.content}</p>
+                    </div>
+                    `;
+                });
+                document.querySelector('#feed').innerHTML = output;
+            });
+        </script>
+
+        <script src="loadHeader.js"></script>
+    </body>
+</html>
