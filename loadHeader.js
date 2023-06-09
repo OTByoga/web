@@ -9,6 +9,7 @@ window.onload = function() {
                 {name: "Home", link: "index.html"},
                 {name: "Yoga Apps", link: "yoga_apps.html"},
                 {name: "Backstage", link: "backstage.html"},
+                {name: "Next YOGAFUNC Release", link: "next_yogafunc_release.html"},
                 // Add more items as needed
             ];
 
