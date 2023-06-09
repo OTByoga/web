@@ -32,6 +32,9 @@
                 });
                 document.querySelector('#feed').innerHTML = output;
             });
+            
+            let content = post.content.split("\n\n").map(paragraph => `<p>${paragraph}</p>`).join('');
+
         </script>
 
         <script src="loadHeader.js"></script>
