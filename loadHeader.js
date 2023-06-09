@@ -1,5 +1,5 @@
 // loadHeader.js
-window.onload = function() {
+document.addEventListener('DOMContentLoaded', function() {
     fetch('header.html')
         .then(response => response.text())
         .then(data => {
@@ -21,4 +21,4 @@ window.onload = function() {
 
             document.getElementById('menu').innerHTML = menuHTML;
         });
-};
+});
