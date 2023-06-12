@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+    <form id="myForm" onsubmit="submitData(event)">
+        <label for="name">Your Name:</label><br>
+        <input type="text" id="name" name="Name"><br>
+        <label for="song">Song Name:</label><br>
+        <input type="text" id="song" name="Song"><br>
+        <label for="artist">Artist:</label><br>
+        <input type="text" id="artist" name="Artist"><br>
+        <label for="link">Link (Spotify or YouTube):</label><br>
+        <input type="text" id="link" name="Link"><br>
+        <input type="submit" value="Submit">
+      </form>
+      
+      <script>
+        function submitData(event) {
+          event.preventDefault();
+      
+          var form = document.getElementById('myForm');
+          var formData = new FormData(form);
+          var xhr = new XMLHttpRequest();
+          xhr.open('POST', 'https://script.google.com/macros/s/AKfycbw9b99ce4Pf-LDk218txk2OAWzp5lBgw-v74ZfPf2yO_3TgCOxGWh5Td8G44tibDS2r/exec'); // Replace with your Web App URL
+          xhr.send(formData);
+      
+          form.reset();
+        }
+      </script>
+      
+
+</body>
+</html>
