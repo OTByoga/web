@@ -14,37 +14,37 @@
         <input type="submit" value="Submit">
       </form>
 
-<script>
-  document.getElementById('myForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-
-    var url = "https://script.google.com/macros/s/AKfycbySPz9IqBHhmgPCVOp0Tg92xZc_mMoZqvSxwAQv3rBp68W_drmbgZctTU6Nyilsj5Ma/exec"; // Replace with your web app URL
-    var formData = new FormData(this);
-    var object = {};
-
-    formData.forEach(function(value, key){
-      object[key] = value;
-    });
-
-    var json = JSON.stringify(object);
-
-    fetch(url, {
-      method: 'POST',
-      mode: 'no-cors',
-      cache: 'no-cache',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: json
-    }).then(function(response) {
-      console.log('Response received');
-    }).catch(function(error) {
-      console.error('Error:', error);
-    });
-
-    this.reset(); // To clear the form fields after submission
-  });
-</script>
+      <script>
+        document.getElementById('myForm').addEventListener('submit', submitForm);
+        
+        function submitForm(e) {
+          e.preventDefault();
+      
+          var formData = new FormData(e.target);
+          var formObject = {};
+      
+          for (var pair of formData.entries()) {
+            formObject[pair[0]] = pair[1];
+          }
+      
+          fetch('https://script.google.com/macros/s/AKfycbxHrpP-9MN3VYi1UHpc47fwNeUnLLve2kd0BdOkvirtTZj0TT-nuuuE2nqWNQyWpg9q/exec', {
+            method: 'POST',
+            body: JSON.stringify(formObject),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(function(response) {
+            console.log('Form submitted successfully');
+          })
+          .catch(function(error) {
+            console.error('Error submitting form:', error);
+          });
+      
+          e.target.reset();
+        }
+      </script>
+      
 
 </body>
 </html>
