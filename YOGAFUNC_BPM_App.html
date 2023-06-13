@@ -112,7 +112,7 @@
       width: 500px;
       height: 500px;
       border-radius: 50%;
-      background-color: rgba(255, 255, 255, 0.5);
+      background-color: rgba(255, 255, 255, 0.7);
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.2s ease-out, transform 0.2s ease-out;
@@ -178,8 +178,10 @@
     var tapTimes = [];
     var bpmHistory = [];
     var averageBPM = 0;
+    var lastAverageBPM = 0; // to store the last calculated average BPM
     var resetTimeout;
     var bpmDisplay, suggestionDisplay, photoContainers, logoContainer;
+    var appIsActive = false;
     var bpmRanges = [
         { min: 0, max: 40, text: "A little slow for YOGAFUNC. Depending on the song, it may be suitable for relaxation.", className: "range-0", photoIndex: 0 },
         { min: 40, max: 60, text: "Suitable tempo for the following tracks:<br>- Track 09: Forward Bending<br>- Track 11: Hip Opening", className: "range-1", photoIndex: 1 },
@@ -210,6 +212,10 @@
 
     // Function to handle tap event
     function tapEvent() {
+    if (!appIsActive) {
+    bpmDisplay.textContent = "BPM: 0"; // Reset BPM display when the app was inactive
+    appIsActive = true; // Set app as active
+  }
   clearTimeout(resetTimeout); // Clear the reset timeout
 
   var currentTime = new Date().getTime();
@@ -224,6 +230,8 @@
 
     // Calculate the average BPM
     averageBPM = Math.round(bpmHistory.reduce(function(a, b) { return a + b; }) / bpmHistory.length);
+
+    lastAverageBPM = averageBPM; // Store the last average BPM
 
     // Display the average BPM
     bpmDisplay.textContent = "BPM: " + averageBPM;
@@ -272,7 +280,8 @@
     tapTimes = []; // Reset tap times
     bpmHistory = []; // Reset BPM history
     averageBPM = 0; // Reset average BPM
-    bpmDisplay.textContent = "BPM: 0"; // Reset BPM display
+    bpmDisplay.textContent = "BPM: " + lastAverageBPM; // Keep the last average BPM on the display
+    appIsActive = false; // Set app as inactive
   }, 2000);
 }
 
