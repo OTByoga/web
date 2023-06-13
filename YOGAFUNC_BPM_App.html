@@ -19,15 +19,19 @@
       font-weight: normal;
     }
 
-    #bpm-display,
-    #suggestion {
-      text-align: center; /* Center align the text elements */
-    }
-
     #bpm-display {
-      font-size: 24px;
-      font-weight: bold;
-    }
+    text-align: center; 
+    font-size: 24px;
+    font-weight: bold;
+    overflow: auto;
+}
+
+    #suggestion {
+    text-align: center;
+    height: 100px;
+    overflow: auto;
+}
+
 
     /* Define the colors for each BPM range */
     .range-0 {
@@ -118,13 +122,13 @@
       transform: translate(-50%, -50%) scale(1.2);
     }
     .back-button {
-  margin-top: 20px;
-  font-size: 18px;
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
+    margin-top: 20px;
+    font-size: 18px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
 }
 
 .back-button:hover {
@@ -176,10 +180,10 @@
     var bpmDisplay, suggestionDisplay, photoContainers, logoContainer;
     var bpmRanges = [
         { min: 0, max: 40, text: "A little slow for YOGAFUNC. Depending on the song, it may be suitable for relaxation.", className: "range-0", photoIndex: 0 },
-        { min: 40, max: 60, text: "Suitable tempo for the following tracks:<br><br>- Track 09: Forward Bending<br>- Track 11: Hip Opening", className: "range-1", photoIndex: 1 },
-        { min: 60, max: 70, text: "Great tempo for the following tracks:<br><br>- Track 01: Sun Salutation A<br>- Track 03: Triangles<br>- Track 05: Warriors (in some cases)", className: "range-2", photoIndex: 2 },
-        { min: 70, max: 80, text: "Works well for the following tracks:<br><br>- Track 02: Sun Salutation B<br>- Track 04: Balance<br>- Track 05: Warriors<br>- Track 06: Hip Openings<br>- Track 07: Core<br>- Track 08: Upper Body Strength<br>- Track 10: Rotations", className: "range-3", photoIndex: 3 },
-        { min: 80, max: 120, text: "Let's build strength with the following tracks:<br><br>- Track 07: Core Strength<br>- Track 08: Upper Body Strength", className: "range-4", photoIndex: 4 },
+        { min: 40, max: 60, text: "Suitable tempo for the following tracks:<br>- Track 09: Forward Bending<br>- Track 11: Hip Opening", className: "range-1", photoIndex: 1 },
+        { min: 60, max: 70, text: "Great tempo for the following tracks:<br>- Track 01: Sun Salutation A<br>- Track 03: Triangles<br>- Track 05: Warriors (in some cases)", className: "range-2", photoIndex: 2 },
+        { min: 70, max: 80, text: "Works well for the following tracks:<br>- Track 02: Sun Salutation B<br>- Track 04: Balance<br>- Track 05: Warriors<br>- Track 06: Hip Openings<br>- Track 07: Core<br>- Track 08: Upper Body Strength<br>- Track 10: Rotations", className: "range-3", photoIndex: 3 },
+        { min: 80, max: 120, text: "Let's build strength with the following tracks:<br>- Track 07: Core Strength<br>- Track 08: Upper Body Strength", className: "range-4", photoIndex: 4 },
         { min: 120, max: Infinity, text: "Consider tapping at half the tempo.", className: "range-5", photoIndex: 5 }
       ];
 
