@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YOGAFUNC Music Search</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+    <style>
+        body {
+            background-color: white;
+            color: black;
+            font-family: 'Courier New', Courier, monospace;            font-size: 14px;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 24px;
+        }
+        
+        #version {
+            text-align: center;
+            font-size: 14px;
+            font-weight: normal;
+            margin-bottom: 10px;
+            display: none;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 20px;
+            box-sizing: border-box;
+            border: none; /* Remove the border */
+            border-radius: 0; /* Remove the border radius */
+            outline: none; /* Remove the outline */
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            color: black;
+            background-color: white;
+        }
+        
+        #searchResults {
+            margin-top: 20px;
+        }
+        #releaseNumberContainer {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        #releaseNumberContainer label {
+            margin-right: 10px;
+        }
+        #searchInput {
+            font-family: 'Courier New', Courier, monospace;
+        } 
+        
+
+    </style>
+<body>
+    <div id="header"></div>
+
+    <h1>YOGAFUNC Music Search</h1>
+    <div id="version"></div>
+    <input type="text" id="searchInput" placeholder="Search for artist, song, album, genre...">
+    <p>Or choose one or more releases below...</p>
+    <div id="releaseNumberContainer"></div>
+    <p>Or choose one or more exercises below...</p>
+    <div id="exerciseContainer"></div>
+    <div id="searchResults"></div>
+    
+    <div style="display: flex; justify-content: center; margin-top: 50px;">
+        <iframe src="YOGAFUNC_BPM_App.html" width="40%" height="600" style="border: none;"></iframe>
+    </div>
+    
+    
+    
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script>
+        var debounce = function(fn, delay) {
+        var timer = null;
+        return function() {
+            var context = this,
+                args = arguments;
+            clearTimeout(timer);
+            timer = setTimeout(function() {
+                fn.apply(context, args);
+            }, delay);
+        };
+    };
+
+        var data = [];
+        var searchMusicDebounced = debounce(searchMusic, 300); // Added this line
+
+        Papa.parse("https://raw.githubusercontent.com/OTByoga/YOGAFUNC_Music/main/YF_music_data_2023_06_11_1711_2.csv", {
+            download: true,
+            header: true,
+            complete: function(results) {
+                data = results.data;
+                
+                // Handling release numbers
+                var releaseNumbers = [...new Set(data.map(item => item['YOGAFUNC release#']))];
+                releaseNumbers.sort((a, b) => a - b);
+                var container = document.getElementById('releaseNumberContainer'); // Make sure you have this container in your HTML
+                releaseNumbers.forEach(number => {
+                    // Skip if the number does not exist or is an empty string
+                    if (!number || number.trim() === '') {
+                        return;
+                    }
+    
+                    var checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = number;
+                    checkbox.id = 'release' + number;
+                    checkbox.name = 'releaseNumber';
+    
+                    var label = document.createElement('label');
+                    label.htmlFor = 'release' + number;
+                    // Pad the number with 0 on the left to ensure it is 2 digits
+                    label.textContent = '#' + String(number).padStart(2, '0');
+    
+                    container.appendChild(checkbox);
+                    container.appendChild(label);
+                });
+    
+                // Handling exercises
+                var exercises = [...new Set(data.map(item => item['YOGAFUNC Excercise']))];
+                exercises.sort();
+                var exerciseContainer = document.getElementById('exerciseContainer');
+                exercises.forEach(exercise => {
+                    if (!exercise || exercise.trim() === '') {
+                        return;
+                    }
+                    var checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = exercise;
+                    checkbox.id = 'exercise' + exercise;
+                    checkbox.name = 'exercise';
+    
+                    var label = document.createElement('label');
+                    label.htmlFor = 'exercise' + exercise;
+                    label.textContent = exercise;
+    
+                    exerciseContainer.appendChild(checkbox);
+                    exerciseContainer.appendChild(label);
+                    exerciseContainer.appendChild(document.createElement('br')); // Add this line
+
+                });
+    
+                // Add event listeners to the exercise checkboxes
+                var exerciseCheckboxes = document.querySelectorAll('input[name="exercise"]');
+                exerciseCheckboxes.forEach(function(checkbox) {
+                    checkbox.addEventListener('change', searchMusic);
+                });
+                // Add event listeners to the release number checkboxes
+                var releaseCheckboxes = document.querySelectorAll('input[name="releaseNumber"]');
+                releaseCheckboxes.forEach(function(checkbox) {
+                    checkbox.addEventListener('change', searchMusic);
+                });
+                // After the checkboxes are created, add event listeners to them
+                var checkboxes = document.querySelectorAll('input[type=checkbox]');
+                checkboxes.forEach(function(checkbox) {
+                    checkbox.addEventListener('change', searchMusic);
+                });
+            }
+        });
+
+        var searchMusicDebounced;
+        function searchMusic() {
+    
+            var searchInput = document.getElementById('searchInput').value.toLowerCase();
+            var selectedReleaseNumbers = Array.from(document.querySelectorAll('input[name="releaseNumber"]:checked')).map(input => input.value);
+            var selectedExercises = Array.from(document.querySelectorAll('input[name="exercise"]:checked')).map(input => input.value);
+            var searchResults = document.getElementById('searchResults');
+            searchResults.innerHTML = '';
+
+    var matches = data.filter(function(item) {
+        var searchWords = searchInput.split(' ');
+
+        var matchesInput = searchWords.every(function(word) {
+            return (
+                item['Track Name'].toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(word) ||
+                item['Album Name'].toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(word) ||
+                item['Artist Name(s)'].toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(word) ||
+                item['Genres'].toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(word)
+            );
+        });
+        var matchesReleaseNumber = (
+            selectedReleaseNumbers.length === 0 || 
+            selectedReleaseNumbers.includes(item['YOGAFUNC release#'])
+        );
+
+        var matchesExercises = (
+            selectedExercises.length === 0 ||
+            selectedExercises.includes(item['YOGAFUNC Excercise'])
+        );
+
+        return matchesInput && matchesReleaseNumber && matchesExercises;
+    });
+
+    if (matches.length > 0) {
+        var table = document.createElement('table');
+
+                var headers = {
+                    'YOGAFUNC release#': 'YOGAFUNC release#',
+                    'YOGAFUNC Excercise': 'YOGAFUNC Excercise',
+                    'Spotify ID': 'Song link',
+                    'Track Name': 'Track Name',
+                    'Artist IDs': 'Artist',
+                    'Artist Name(s)': 'Artist Name(s)',
+                    'Album Name': 'Album Name',
+                    'Release Date': 'Release Date',
+                    'Duration (ms)': 'Duration',
+                    'Popularity': 'Popularity',
+                    'Added By': 'Added By',
+                    'Added At': 'Added At',
+                    'Genres': 'Genres',
+                    'Danceability': 'Beat & Rhythm (%)',
+                    'Energy': 'Energy (%)',
+                    'Key': 'Key',
+                    'Loudness': 'Loudness',
+                    'Mode': 'Emotional Character',
+                    'Speechiness': 'Speechiness (%)',
+                    'Acousticness': 'Acousticness (%)',
+                    'Instrumentalness': 'Instrumentalness (%)',
+                    'Liveness': 'Liveness (%)',
+                    'Valence': 'Positivity scale (%)',
+                    'Tempo': 'Tempo',
+                    'Time Signature': 'Time Signature',
+                    'This YOGAFUNC release was launched': 'This YOGAFUNC release was launched'
+                };
+                
+                var modeDescriptions = {
+                    '0': 'Minor Key',
+                    '1': 'Major Key'
+                };
+
+                var headerRow = document.createElement('tr');
+                for (var key in headers) {
+                    if (headers.hasOwnProperty(key)) {
+                        var headerCell = document.createElement('th');
+                        headerCell.textContent = headers[key];
+                        headerRow.appendChild(headerCell);
+                    }
+                }
+                table.appendChild(headerRow);
+
+                matches.forEach(function(item) {
+                    var row = document.createElement('tr');
+                    for (var key in headers) {
+                        if (headers.hasOwnProperty(key)) {
+                            var cell = document.createElement('td');
+                            var value = item[key];
+                            
+                            // Convert decimal values to percentages
+                            if (key === 'Danceability' || key === 'Energy' || key === 'Speechiness' || key === 'Acousticness' || key === 'Instrumentalness' || key === 'Liveness' || key === 'Valence') {
+                                value = (parseFloat(value) * 100).toFixed(2) + '%';
+                            }
+                            
+                            // Convert duration from milliseconds to minutes and seconds
+                            if (key === 'Duration (ms)') {
+                                var duration = parseFloat(value);
+                                var minutes = Math.floor(duration / 60000);
+                                var seconds = ((duration % 60000) / 1000).toFixed(0);
+                                value = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+                            }
+                            
+                            // Map mode values to emotional character descriptions
+                            if (key === 'Mode') {
+                                value = modeDescriptions[value] || '-';
+                            }
+                            
+                            // Generate Spotify track link
+                            if (key === 'Spotify ID') {
+                                var trackId = value;
+                                var trackLink = document.createElement('a');
+                                trackLink.href = 'https://open.spotify.com/track/' + trackId;
+                                trackLink.target = '_blank';
+                                trackLink.textContent = trackId;
+                                cell.appendChild(trackLink);
+                            }
+                            
+                            // Generate Spotify artist links
+                            if (key === 'Artist IDs' && value) {
+                                var artistIds = value.split(',');
+                                artistIds.forEach(function(artistId) {
+                                    var artistLink = document.createElement('a');
+                                    artistLink.href = 'https://open.spotify.com/artist/' + artistId.trim();
+                                    artistLink.target = '_blank';
+                                    artistLink.textContent = artistId.trim();
+                                    cell.appendChild(document.createElement('br'));
+                                    cell.appendChild(artistLink);
+                                });
+                            }
+                            
+                            if (key !== 'Spotify ID' && key !== 'Artist IDs') {
+                                cell.textContent = value;
+                            }
+                            
+                            row.appendChild(cell);
+                        }
+                    }
+                    table.appendChild(row);
+                });
+
+                searchResults.appendChild(table);
+            } else {
+                searchResults.textContent = 'No matching results found.';
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('input', searchMusicDebounced);
+        
+       
+    var versionElement = document.getElementById('version');
+    var versionNumber = "4.2.4"; // Replace with your desired version number
+
+    if (versionNumber) {
+        versionElement.style.display = 'block';
+        versionElement.textContent = "Ver (" + versionNumber + ")";
+    } else {
+        versionElement.style.display = 'none';
+    }
+    </script>
+   
+
+</body>
+</html>
