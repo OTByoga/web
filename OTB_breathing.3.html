@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Outside The Box Breathing App</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            transition: background-color 0.5s ease;
+        }
+        #box {
+            border: 2px solid black;
+            width: 100px;
+            height: 100px;
+            transition: all 0.5s ease;
+            margin: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: black;
+            font-size: 16px;
+        }
+        .stats {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <p id="instructions"></p>
+    <div id="box">
+        <p id="breath-status"></p>
+    </div>
+    <div class="stats">
+        <p id="latest"></p>
+        <p id="average"></p>
+    </div>
+    <button id="reset">Reset</button>
+    
+    <script>
+        let box = document.getElementById('box');
+        let breathStatus = document.getElementById('breath-status');
+        let latest = document.getElementById('latest');
+        let averageDisplay = document.getElementById('average');
+        let instructions = document.getElementById('instructions');
+        let resetButton = document.getElementById('reset');
+
+        let intervalId;
+        let splitTimes = [];
+        let size = 100;
+        let expanding = true;
+        let automaticMode = false;
+        let lastChangeTime;
+        
+        instructions.textContent = "Hit the spacebar when you hear the mantra, to sync the app. Repeat the process as long as you want";
+
+        function animate() {
+            if (expanding) {
+                size += 2;
+                if (size > 500) size = 500;
+                document.body.style.backgroundColor = '#ADD8E6'; // Light Blue for inhale
+                breathStatus.innerText = "INHALE";
+            } else {
+                size -= 2;
+                if (size < 20) size = 20;
+                document.body.style.backgroundColor = '#D4AF37'; // Pale Gold for exhale
+                breathStatus.innerText = "EXHALE";
+            }
+            box.style.width = size + 'px';
+            box.style.height = size + 'px';
+            if (automaticMode && (new Date() - lastChangeTime) >= calculateAverageTime(splitTimes)) {
+                expanding = !expanding;
+                lastChangeTime = new Date();
+            }
+            if (!automaticMode && (size === 500 || size === 20)) {
+                clearInterval(intervalId);
+                intervalId = null;
+                breathStatus.innerText = "HOLD";
+            }
+        }
+
+        function calculateAverageTime(timesArray) {
+        let averageTime = timesArray.reduce((a, b) => a + b, 0) / timesArray.length;
+        return Math.round(averageTime); // rounds to the nearest integer
+    }
+
+        function enterAutomaticMode() {
+            if (expanding) {
+                instructions.textContent = "Hit enter after exhalation.";
+                return;
+            } 
+            automaticMode = true;
+            lastChangeTime = new Date();
+            expanding = true;
+            instructions.textContent = "";
+        }
+
+        // Add an event listener for the Enter key
+        window.addEventListener('keydown', function (event) {
+            if (event.code === 'Enter') {
+                enterAutomaticMode();
+            }
+        });
+
+        window.onkeydown = (e) => {
+            if (e.code === "Space") {
+                e.preventDefault();
+                if (intervalId) {
+                    clearInterval(intervalId);
+                    let splitTime = new Date() - startTime;
+                    splitTimes.push(splitTime);
+                    latest.innerText = "Latest split time: " + splitTime + "ms";
+                    if (splitTimes.length > 3) {
+                        splitTimes.shift(); // Remove the oldest split time
+                    }
+                    if (splitTimes.length >= 2) {
+                        let average = calculateAverageTime(splitTimes);
+                        averageDisplay.innerText = "Average split time: " + average + "ms";
+                    }
+                    expanding = !expanding;
+                } else {
+                    expanding = true; // Set to true so that box starts expanding on first keypress
+                    instructions.textContent = "Hit the 'enter' key when you have synced the box with the mantra";
+                }
+                startTime = new Date();
+                intervalId = setInterval(animate, 100);
+            }
+        }
+
+        resetButton.onclick = function() {
+            this.blur();
+            clearInterval(intervalId);
+            intervalId = null;
+            automaticMode = false;
+            splitTimes = [];
+            size = 100; // reset size to 100px
+            box.style.width = '100px';
+            box.style.height = '100px';
+            expanding = true;
+            latest.innerText = "";
+            averageDisplay.innerText = "";
+            instructions.textContent = "Hit the spacebar when you hear the mantra, to sync the app. Repeat the process as long as you want";
+            breathStatus.innerText = "";
+            document.body.style.backgroundColor = '#f0f0f0'; // Reset body color
+        }
+    </script>
+</body>
+</html>
