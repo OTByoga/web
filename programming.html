@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MP3 Looper</title>
+</head>
+<body>
+    <h1>Choose Your Program</h1>
+    <select id="audioSelect">
+        <!-- Options will be added dynamically -->
+    </select>
+
+    <h1>How many times do you want to loop it?</h1>
+    <input type="number" id="loopCount" min="1" max="100" value="1">
+
+    <button onclick="startProgram()">Start Program</button>
+
+    <audio id="audioPlayer" controls></audio>
+
+    <script>
+        // Array of audio file URLs
+        var audioFiles = [
+            'YogiOnTheBike_program.mp3',
+            'audio2.mp3',
+            // Add more audio files as needed
+        ];
+
+        // Populate the audioSelect dropdown
+        var audioSelect = document.getElementById('audioSelect');
+        for (var i = 0; i < audioFiles.length; i++) {
+            var option = document.createElement('option');
+            option.value = audioFiles[i];
+            option.text = 'Program ' + (i + 1);
+            audioSelect.appendChild(option);
+        }
+
+        // Get the audio player
+        var audioPlayer = document.getElementById('audioPlayer');
+
+        // Function to start the program
+        function startProgram() {
+            // Get the selected audio file and loop count
+            var audioFile = audioSelect.value;
+            var loopCount = document.getElementById('loopCount').value;
+
+            // Set the audio player source and loop count
+            audioPlayer.src = audioFile;
+            audioPlayer.loop = true;
+
+            // Play the audio file
+            audioPlayer.play();
+
+            // Stop looping after the specified number of loops
+            var loopCounter = 0;
+            audioPlayer.onended = function() {
+                loopCounter++;
+                if (loopCounter >= loopCount) {
+                    audioPlayer.loop = false;
+                }
+            };
+        }
+    </script>
+</body>
+</html>
