@@ -7,10 +7,30 @@
             background-color: #282828;
             color: white;
             font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        h1, p, select, input, button {
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
+    <p>This is me just trying out something. This will become an interactive meditation page where you can create your own affirmations and meditations with the help of "Chad" (GPT-4).</p>
+
     <h1>Choose Your Program</h1>
     <select id="audioSelect">
         <!-- Options will be added dynamically -->
@@ -49,22 +69,18 @@
             var audioFile = audioSelect.value;
             var loopCount = document.getElementById('loopCount').value;
 
-            // Set the audio player source and loop count
+            // Set the audio player source
             audioPlayer.src = audioFile;
-            audioPlayer.loop = true;
 
             // Play the audio file
             audioPlayer.play();
 
             // Stop looping after the specified number of loops
             var loopCounter = 0;
-            audioPlayer.ontimeupdate = function() {
-                if (audioPlayer.ended) {
-                    loopCounter++;
-                    if (loopCounter >= loopCount) {
-                        audioPlayer.loop = false;
-                        audioPlayer.ontimeupdate = null; // Remove the event handler
-                    }
+            audioPlayer.onended = function() {
+                loopCounter++;
+                if (loopCounter < loopCount) {
+                    audioPlayer.play();
                 }
             };
         }
