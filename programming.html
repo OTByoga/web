@@ -51,10 +51,13 @@
 
             // Stop looping after the specified number of loops
             var loopCounter = 0;
-            audioPlayer.onended = function() {
-                loopCounter++;
-                if (loopCounter >= loopCount) {
-                    audioPlayer.loop = false;
+            audioPlayer.ontimeupdate = function() {
+                if (audioPlayer.ended) {
+                    loopCounter++;
+                    if (loopCounter >= loopCount) {
+                        audioPlayer.loop = false;
+                        audioPlayer.ontimeupdate = null; // Remove the event handler
+                    }
                 }
             };
         }
