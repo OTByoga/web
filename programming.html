@@ -2,6 +2,13 @@
 <html>
 <head>
     <title>MP3 Looper</title>
+    <style>
+        body {
+            background-color: #282828;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+    </style>
 </head>
 <body>
     <h1>Choose Your Program</h1>
@@ -29,7 +36,7 @@
         for (var i = 0; i < audioFiles.length; i++) {
             var option = document.createElement('option');
             option.value = audioFiles[i];
-            option.text = 'Program ' + (i + 1);
+            option.text = audioFiles[i].split('/').pop(); // Display the file name in the dropdown
             audioSelect.appendChild(option);
         }
 
