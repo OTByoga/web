@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Re-program Your Mind</title>
+    <!-- Firebase Initialization Script -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            authDomain: "pers-meditations-777-program.firebaseapp.com",
+            projectId: "pers-meditations-777-program",
+            storageBucket: "pers-meditations-777-program.appspot.com",
+            messagingSenderId: "460051421296",
+            appId: "1:460051421296:web:412ef818484bcddfc57cb5"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+    </script>
+    <style>
+        /* ... (your styles remain unchanged) ... */
+    </style>
+</head>
+
+<body>
+    <p>This is me just trying out something.<br>This will become an interactive meditation page<br> where you can create your own affirmations and meditations <br> with the help of "Chad" (GPT-4).</p>
+
+    <h1>Choose Your Program</h1>
+    <select id="audioSelect">
+        <!-- Options will be added dynamically -->
+    </select>
+
+    <h1>How many times do you want to loop it?</h1>
+    <input type="number" id="loopCount" min="1" max="100" value="1">
+
+    <button onclick="startProgram()">Start Program</button>
+
+    <audio id="audioPlayer" controls></audio>
+
+    <script>
+        // Array of audio file URLs with user-specific data
+        var audioFiles = [{
+                url: 'https://raw.githubusercontent.com/OTByoga/web/main/audio/YogiOnTheBike_program.mp3',
+                title: 'General Meditation 1',
+                isPersonalized: false
+            },
+            // Example of a personalized meditation
+            {
+                url: 'https://soundcloud.com/user-748315734/sets/the-loop-yoga?si=6bfa1a500fd24a728e01619848068f4a&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing',
+                title: 'Personalized Meditation for John',
+                isPersonalized: true,
+                userId: 'johnsUserID' // This is an example. In reality, you'd use Firebase's user UID.
+            }
+            // ... more audio files
+        ];
+
+        function populateDropdown() {
+            var currentUser = firebase.auth().currentUser;
+            var audioSelect = document.getElementById('audioSelect');
+            audioSelect.innerHTML = ''; // Clear existing options
+
+            audioFiles.forEach(function(audio) {
+                if (!audio.isPersonalized || (audio.isPersonalized && currentUser && currentUser.uid === audio.userId)) {
+                    var option = document.createElement('option');
+                    option.value = audio.url;
+                    option.text = audio.title;
+                    audioSelect.appendChild(option);
+                }
+            });
+        }
+
+        function startProgram() {
+            var selectedAudioUrl = audioSelect.value;
+            var selectedAudio = audioFiles.find(audio => audio.url === selectedAudioUrl);
+            var currentUser = firebase.auth().currentUser;
+
+            if (selectedAudio.isPersonalized) {
+                if (!currentUser) {
+                    alert("Please log in to access personalized meditations.");
+                    return;
+                } else if (currentUser.uid !== selectedAudio.userId) {
+                    alert("You don't have access to this meditation.");
+                    return;
+                }
+            }
+
+            var loopCount = document.getElementById('loopCount').value;
+            audioPlayer.src = selectedAudioUrl;
+            audioPlayer.play();
+
+            var loopCounter = 0;
+            audioPlayer.onended = function() {
+                loopCounter++;
+                if (loopCounter < loopCount) {
+                    audioPlayer.play();
+                }
+            };
+        }
+
+        setInterval(function() {
+            /* This will "click" the body of the page every 5 minutes (300000 milliseconds) */
+            document.body.click();
+        }, 100000);
+
+        // Call the populateDropdown function to populate the dropdown when the page loads
+        populateDropdown();
+
+    </script>
+</body>
+
+</html>
