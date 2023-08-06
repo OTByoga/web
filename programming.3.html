@@ -4,27 +4,10 @@
 <head>
     <title>Re-program Your Mind</title>
     <!-- Firebase Initialization Script -->
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-        // TODO: Add SDKs for Firebase products that you want to use
-        // https://firebase.google.com/docs/web/setup#available-libraries
-
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCUq_Vtli0yZ6LgXbdGN41KJVEWiIo5L-E",
-            authDomain: "pers-meditations-777-program.firebaseapp.com",
-            projectId: "pers-meditations-777-program",
-            storageBucket: "pers-meditations-777-program.appspot.com",
-            messagingSenderId: "460051421296",
-            appId: "1:460051421296:web:412ef818484bcddfc57cb5"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js"></script>
     <style>
-        body {
+ body {
             background-color: #282828;
             color: white;
             font-family: Arial, sans-serif;
@@ -52,11 +35,24 @@
                 padding: 20px;
                 font-size: 18px; /* Increase the font size on small screens */
             }
-        }
-    </style>
+        }    </style>
 </head>
 
 <body>
+    <!-- Registration and Login UI -->
+    <div id="authContainer">
+        <h2>Register</h2>
+        <input type="email" id="registerEmail" placeholder="Email">
+        <input type="password" id="registerPassword" placeholder="Password">
+        <button onclick="registerUser()">Register</button>
+
+        <h2>Login</h2>
+        <input type="email" id="loginEmail" placeholder="Email">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button onclick="loginUser()">Login</button>
+        <button onclick="logoutUser()">Logout</button>
+    </div>
+
     <p>This is me just trying out something.<br>This will become an interactive meditation page<br> where you can create your own affirmations and meditations <br> with the help of "Chad" (GPT-4).</p>
 
     <h1>Choose Your Program</h1>
@@ -72,26 +68,72 @@
     <audio id="audioPlayer" controls></audio>
 
     <script>
-        // Array of audio file URLs with user-specific data
+        // Firebase Initialization
+        const firebaseConfig = {
+            apiKey: "AIzaSyCUq_Vtli0yZ6LgXbdGN41KJVEWiIo5L-E",
+            authDomain: "pers-meditations-777-program.firebaseapp.com",
+            projectId: "pers-meditations-777-program",
+            storageBucket: "pers-meditations-777-program.appspot.com",
+            messagingSenderId: "460051421296",
+            appId: "1:460051421296:web:412ef818484bcddfc57cb5"
+        };
+        const app = firebase.initializeApp(firebaseConfig);
+
+        // Registration function
+        function registerUser() {
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    alert('Registration successful!');
+                })
+                .catch((error) => {
+                    alert('Error during registration: ' + error.message);
+                });
+        }
+
+        // Login function
+        function loginUser() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    alert('Login successful!');
+                })
+                .catch((error) => {
+                    alert('Error during login: ' + error.message);
+                });
+        }
+
+        // Logout function
+        function logoutUser() {
+            firebase.auth().signOut()
+                .then(() => {
+                    alert('Logged out successfully!');
+                })
+                .catch((error) => {
+                    alert('Error during logout: ' + error.message);
+                });
+        }
+
+        // Your existing functions
         var audioFiles = [{
                 url: 'https://raw.githubusercontent.com/OTByoga/web/main/audio/YogiOnTheBike_program.mp3',
                 title: 'General Meditation 1',
                 isPersonalized: false
             },
-            // Example of a personalized meditation
             {
                 url: 'https://soundcloud.com/user-748315734/sets/the-loop-yoga?si=6bfa1a500fd24a728e01619848068f4a&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing',
                 title: 'Personalized Meditation for John',
                 isPersonalized: true,
-                userId: 'johnsUserID' // This is an example. In reality, you'd use Firebase's user UID.
+                userId: 'johnsUserID'
             }
-            // ... more audio files
         ];
 
         function populateDropdown() {
             var currentUser = firebase.auth().currentUser;
             var audioSelect = document.getElementById('audioSelect');
-            audioSelect.innerHTML = ''; // Clear existing options
+            audioSelect.innerHTML = '';
 
             audioFiles.forEach(function(audio) {
                 if (!audio.isPersonalized || (audio.isPersonalized && currentUser && currentUser.uid === audio.userId)) {
@@ -132,11 +174,9 @@
         }
 
         setInterval(function() {
-            /* This will "click" the body of the page every 5 minutes (300000 milliseconds) */
             document.body.click();
         }, 100000);
 
-        // Call the populateDropdown function to populate the dropdown when the page loads
         populateDropdown();
 
     </script>
