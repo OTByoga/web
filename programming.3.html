@@ -12,7 +12,7 @@
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
-            apiKey: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            apiKey: "AIzaSyCUq_Vtli0yZ6LgXbdGN41KJVEWiIo5L-E",
             authDomain: "pers-meditations-777-program.firebaseapp.com",
             projectId: "pers-meditations-777-program",
             storageBucket: "pers-meditations-777-program.appspot.com",
@@ -24,7 +24,35 @@
         const app = initializeApp(firebaseConfig);
     </script>
     <style>
-        /* ... (your styles remain unchanged) ... */
+        body {
+            background-color: #282828;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        h1, p, select, input, button {
+            margin-bottom: 20px;
+        }
+
+        p {
+            word-wrap: break-word;
+            text-align: center; /* Add this line */
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 20px;
+                font-size: 18px; /* Increase the font size on small screens */
+            }
+        }
     </style>
 </head>
 
